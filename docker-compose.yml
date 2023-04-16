@@ -1,0 +1,41 @@
+version: '3.9'
+services:
+  database:
+    image: mongo:4.1.13
+    container_name: database
+    networks:
+      - backend_network
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - 27017:27017
+  
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile 
+    container_name: backend
+    networks:
+      - backend_network
+      - frontend_network
+    ports:
+      - 3003:3003
+    depends_on:
+      - database
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    networks:
+      - frontend_network
+    ports: 
+      - 3000:3000
+
+volumes:
+  mongo_data:
+
+networks:
+  backend_network:
+  frontend_network:
